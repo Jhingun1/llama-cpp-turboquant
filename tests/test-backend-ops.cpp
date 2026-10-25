@@ -11782,6 +11782,12 @@ int main(int argc, char ** argv) {
 
     if (total_tests_run == 0) {
         // 0/0 must never read as OK: no backend exercised any case
+        if (op_names_filter == nullptr && params_filter == nullptr && backend_filter == nullptr) {
+            // nothing was filtered, every backend was skipped (e.g. a CPU-only host in test mode):
+            // exit 77 so ctest records a skip (SKIP_RETURN_CODE in tests/CMakeLists.txt)
+            fprintf(stderr, "WARNING: 0 tests ran (all backends skipped)\n");
+            return 77;
+        }
         fprintf(stderr, "WARNING: 0 tests ran (all backends skipped or filtered)\n");
         return 1;
     }
